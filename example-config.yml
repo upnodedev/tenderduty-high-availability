@@ -48,6 +48,12 @@ slack:
   # The webhook can be added in the Slack app directory.
   webhook: https://hooks.slack.com/services/AAAAAAAAAAAAAAAAAAAAAAA/bbbbbbbbbbbbbbbbbbbbbbbb
 
+# High availability
+ha:
+  listen_port: 8899
+  node_index: 0
+  another_endpoint: http://11.22.33.44:8899
+
 # The various chains to be monitored. Create a new entry for each chain. The name itself can be arbitrary, but a
 # user-friendly name is recommended.
 chains:
@@ -125,3 +131,6 @@ chains:
       # repeat hosts for monitoring redundancy
       - url: https://some-other-node:443
         alert_if_down: no
+
+    ha:
+      service_name: tmkms-osmosis

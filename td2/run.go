@@ -10,6 +10,7 @@ import (
 	"time"
 
 	dash "github.com/blockpane/tenderduty/v2/td2/dashboard"
+	"github.com/blockpane/tenderduty/v2/td2/ha"
 )
 
 var td = &Config{}
@@ -37,6 +38,14 @@ func Run(configFile, stateFile, chainConfigDirectory string, password *string) e
 			case alert := <-td.alertChan:
 				go func(msg *alertMsg) {
 					var e error
+
+					if !alert.resolved {
+						e = ha.OnAlert(msg.chain)
+						if e != nil {
+							l(msg.chain, "error sending alert to ha", e.Error())
+						}
+					}
+
 					e = notifyPagerduty(msg)
 					if e != nil {
 						l(msg.chain, "error sending alert to pagerduty", e.Error())
@@ -82,6 +91,8 @@ func Run(configFile, stateFile, chainConfigDirectory string, password *string) e
 
 	for k := range td.Chains {
 		cc := td.Chains[k]
+
+		go ha.ProcessHaState(ha.InitHaState(k), &td.Ha, &cc.Ha)
 
 		go func(cc *ChainConfig, name string) {
 			// alert worker

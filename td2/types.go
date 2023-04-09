@@ -18,6 +18,7 @@ import (
 	"time"
 
 	dash "github.com/blockpane/tenderduty/v2/td2/dashboard"
+	ha "github.com/blockpane/tenderduty/v2/td2/ha"
 	"github.com/go-yaml/yaml"
 	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
 )
@@ -36,6 +37,8 @@ type Config struct {
 	ctx        context.Context
 	cancel     context.CancelFunc
 	alarms     *alarmCache
+
+	Ha ha.HaConfig `yaml:"ha"`
 
 	// EnableDash enables the web dashboard
 	EnableDash bool `yaml:"enable_dashboard"`
@@ -118,6 +121,8 @@ type ChainConfig struct {
 	PublicFallback bool `yaml:"public_fallback"`
 	// Nodes defines what RPC servers to connect to.
 	Nodes []*NodeConfig `yaml:"nodes"`
+
+	Ha ha.HaChainConfig `yaml:"ha"`
 }
 
 // mkUpdate returns the info needed by prometheus for a gauge.
